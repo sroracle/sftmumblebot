@@ -1,12 +1,10 @@
-import AbstractConnection
-import sys
+from . import AbstractConnection
 import socket
-import string
 import time
 import ssl
 import platform
 import struct
-import thread
+import _thread
 import sftbot.protobuf.Mumble_pb2 as pb2
 
 messageTypes = {
@@ -26,6 +24,16 @@ messageTypes = {
     13: pb2.ACL,
     14: pb2.QueryUsers,
     15: pb2.CryptSetup,
+    16: pb2.ContextActionModify,
+    17: pb2.ContextAction,
+    18: pb2.UserList,
+    19: pb2.VoiceTarget,
+    20: pb2.PermissionQuery,
+    21: pb2.CodecVersion,
+    22: pb2.UserStats,
+    23: pb2.RequestBlob,
+    24: pb2.ServerConfig,
+    25: pb2.SuggestConfig,
 }
 
 for k, v in messageTypes.items():
@@ -110,7 +118,7 @@ class MumbleConnection(AbstractConnection.AbstractConnection):
         """
         start ping loop; connection is _not_ established yet.
         """
-        thread.start_new_thread(self._pingLoop, ())
+        _thread.start_new_thread(self._pingLoop, ())
         return True
 
     def _closeConnection(self):
@@ -159,7 +167,7 @@ class MumbleConnection(AbstractConnection.AbstractConnection):
             self._joinChannel(self._channel)
         elif messagetype == pb2.ChannelState:
             self._log("channel state package received", 2)
-            if(pbMess.name):
+            if pbMess.name:
                 self._log("channel " + pbMess.name + " has id " +
                           str(pbMess.channel_id), 2)
                 self._channelIds[pbMess.name] = pbMess.channel_id
@@ -174,7 +182,7 @@ class MumbleConnection(AbstractConnection.AbstractConnection):
             self._invokeTextCallback(sender, pbMess.message)
         elif messagetype == pb2.UserState:
             self._log("user state package received.", 2)
-            if(pbMess.name and pbMess.session):
+            if pbMess.name and pbMess.session:
                 self._users[pbMess.session] = pbMess.name
                 self._userIds[pbMess.name] = pbMess.session
                 self._log("user " + pbMess.name + " has id " +
@@ -263,7 +271,7 @@ class MumbleConnection(AbstractConnection.AbstractConnection):
                       % message, 1)
             return False
 
-        if not self._established:
+        if not self.established:
             self._log("can't set comment to %s: connection not established"
                       % message, 1)
             return False

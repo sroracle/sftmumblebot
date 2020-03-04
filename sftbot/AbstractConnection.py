@@ -1,10 +1,7 @@
 import sys
-import socket
-import string
-import thread
+import _thread
 import threading
 import traceback
-import util
 
 
 class AbstractConnection(object):
@@ -28,7 +25,7 @@ class AbstractConnection(object):
         self._connected = False
         # is the connection currently fully established?
         # (does it allow sending messages?)
-        self._established = False
+        self.established = False
         # bot name (mainly for logging)
         self._name = name
 
@@ -169,14 +166,14 @@ class AbstractConnection(object):
         """
         call this to start the connection, as a thread.
         """
-        thread.start_new_thread(self.run, ())
+        _thread.start_new_thread(self.run, ())
 
     def stop(self):
         """
         call this to terminate the connection.
         """
         self._connected = False
-        self._established = False
+        self.established = False
 
     def _connectionEstablished(self):
         """
@@ -186,7 +183,7 @@ class AbstractConnection(object):
         if not self._connected:
             raise Exception("connection can't be established, since it's " +
                             "not even connected")
-        self._established = True
+        self.established = True
         self._invokeConnectionEstablishedCallback()
 
     def run(self):
@@ -242,7 +239,7 @@ class AbstractConnection(object):
         else:
             self._log("connection terminated without error", 1)
 
-        self._established = False
+        self.established = False
         self._connected = False
 
         # try to close the file/socket, in case it's still open.
@@ -282,7 +279,7 @@ class AbstractConnection(object):
         called.
         """
         try:
-            if not self._established:
+            if not self.established:
                 raise Exception("connection not established")
             if not self._sendTextMessageUnsafe(message):
                 raise Exception("unknown error")
@@ -290,11 +287,11 @@ class AbstractConnection(object):
             self._logException("could not send text message", 1)
 
     def _log(self, message, level):
-        if(self._loglevel >= level):
+        if self._loglevel >= level:
             for line in message.split('\n'):
                 output = "(" + str(level) + ") " + self._name + ":"
                 output = output.ljust(15)
-                output = output + util.try_encode(line, 'utf-8')
+                output = output + line
                 print(output)
 
     def _logException(self, message, level):

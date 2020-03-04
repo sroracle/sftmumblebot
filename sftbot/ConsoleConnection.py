@@ -1,16 +1,13 @@
-import AbstractConnection
+from . import AbstractConnection
 import sys
-import string
-import util
 
 
 class ConsoleConnection(AbstractConnection.AbstractConnection):
-    def __init__(self, encoding, name, loglevel):
+    def __init__(self, name, loglevel):
         """
         just store the encoding.
         """
         super(ConsoleConnection, self).__init__(name, loglevel)
-        self._encoding = encoding
 
     def _openConnection(self):
         """
@@ -43,7 +40,6 @@ class ConsoleConnection(AbstractConnection.AbstractConnection):
             self._invokeTextCallback("console", "Goodbye.")
             return False
 
-        line = util.try_decode(line, self._encoding)
         self._invokeTextCallback("console", line)
         return True
 
@@ -52,7 +48,7 @@ class ConsoleConnection(AbstractConnection.AbstractConnection):
         """
         write the message to stdout
         """
-        print(util.try_encode(message, self._encoding))
+        print(message)
         return True
 
     # pass the given line to _sendMessage.

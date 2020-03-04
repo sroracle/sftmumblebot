@@ -1,12 +1,12 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 from distutils.core import setup
 from sftbot import VERSION
 from sys import version_info
 from os import path
 
-if version_info[0] != 2:
-    print("use python2 to install sftmumblebot")
+if version_info[0] != 3:
+    print("use python3 to install sftmumblebot")
     exit(1)
 
 pb_filename = path.join(path.dirname(__file__),

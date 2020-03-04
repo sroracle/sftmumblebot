@@ -1,10 +1,10 @@
 #!/usr/bin/env python2
 import sys
-import MumbleConnection
-import IRCConnection
-import ConsoleConnection
+from . import MumbleConnection
+from . import IRCConnection
+from . import ConsoleConnection
 import time
-import ConfigParser
+import configparser
 import os.path
 import sftbot
 
@@ -17,7 +17,7 @@ def mumbleTextMessageCallback(sender, message):
     line = "mumble: " + sender + ": " + message
     console.sendTextMessage(line)
     irc.sendTextMessage(line)
-    if(message == 'gtfo'):
+    if message == 'gtfo':
         mumble.sendTextMessage("KAY CU")
         mumble.stop()
 
@@ -26,7 +26,7 @@ def ircTextMessageCallback(sender, message):
     line = "irc: " + sender + ": " + message
     console.sendTextMessage(line)
     mumble.sendTextMessage(line)
-    if (message == 'gtfo'):
+    if message == 'gtfo':
         irc.sendTextMessage("KAY CU")
         irc.stop()
 
@@ -58,7 +58,8 @@ def mumbleConnectionFailed():
 
 
 def ircConnected():
-    mumble.setComment()
+    if mumble.established:
+        mumble.setComment()
 
 
 def ircDisconnected():
@@ -106,26 +107,25 @@ def main():
 
     # read the conffile from the identified path
     print("loading conf file " + conffile)
-    cparser = ConfigParser.ConfigParser()
+    cparser = configparser.ConfigParser()
     cparser.read(conffile)
 
     # configuration for the mumble connection
     mblservername = cparser.get('mumble', 'server')
-    mblport = int(cparser.get('mumble', 'port'))
+    mblport = cparser.getint('mumble', 'port')
     mblnick = cparser.get('mumble', 'nickname')
     mblchannel = cparser.get('mumble', 'channel')
     mblpassword = cparser.get('mumble', 'password')
-    mblloglevel = int(cparser.get('mumble', 'loglevel'))
+    mblloglevel = cparser.getint('mumble', 'loglevel')
 
     # configuration for the IRC connection
     ircservername = cparser.get('irc', 'server')
-    ircport = int(cparser.get('irc', 'port'))
+    ircport = cparser.getint('irc', 'port')
     ircnick = cparser.get('irc', 'nickname')
     ircchannel = cparser.get('irc', 'channel')
-    ircpassword = cparser.get('irc', 'password', '')
+    ircpassword = cparser.get('irc', 'password', fallback='')
     ircauthtype = cparser.get('irc', 'authtype')
-    ircencoding = cparser.get('irc', 'encoding')
-    ircloglevel = int(cparser.get('irc', 'loglevel'))
+    ircloglevel = cparser.getint('irc', 'loglevel')
 
     # create server connections
     # hostname, port, nickname, channel, password, name, loglevel
@@ -145,12 +145,10 @@ def main():
         ircchannel,
         ircpassword,
         ircauthtype,
-        ircencoding,
         "irc",
         ircloglevel)
 
     console = ConsoleConnection.ConsoleConnection(
-        "utf-8",
         "console",
         loglevel)
 

@@ -1,13 +1,10 @@
-import AbstractConnection
-import sys
+from . import AbstractConnection
 import socket
-import string
-import util
 
 
 class IRCConnection(AbstractConnection.AbstractConnection):
     def __init__(self, hostname, port, nickname, channel, password,
-                 authtype, encoding, name, loglevel):
+                 authtype, name, loglevel):
         super(IRCConnection, self).__init__(name, loglevel)
         self._hostname = hostname
         self._port = port
@@ -19,11 +16,10 @@ class IRCConnection(AbstractConnection.AbstractConnection):
         if authtype not in {'none', 'channelkey', 'pass', 'nickserv'}:
             raise Exception("invalid authtype: %s" % authtype)
 
-        self._encoding = encoding
         self._socket = None
 
         # contains all read, but uninterpreted data
-        self._readBuffer = ""
+        self._readBuffer = b""
         self.welcomemsg_received = False
 
     def _openConnection(self):
@@ -90,13 +86,13 @@ class IRCConnection(AbstractConnection.AbstractConnection):
         # read up to 4 kB of data into the buffer.
         self._readBuffer += self._socket.recv(4096)
         # get all distinct lines from the buffer into lines.
-        lines = self._readBuffer.split('\n')
+        lines = self._readBuffer.split(b'\n')
         # move the last (unfinished) line back into the buffer.
         self._readBuffer = lines.pop()
 
         # process all lines.
         for line in lines:
-            line = util.try_decode(line, self._encoding)
+            line = line.decode()
             self._log("rx: " + line, 3)
             # split the line up at spaces
             line = line.rstrip().split(' ', 3)
@@ -130,9 +126,9 @@ class IRCConnection(AbstractConnection.AbstractConnection):
         """
         self._log("tx: " + message, 3)
         try:
-            self._socket.send(util.try_encode(message, self._encoding) + "\n")
+            self._socket.send((message + "\n").encode())
         except Exception as e:
-            self._log("failed sending %s: " % (message) + str(e), 1)
+            self._log("failed sending %s: " % message + str(e), 1)
             return False
         return True
 
@@ -149,7 +145,7 @@ class IRCConnection(AbstractConnection.AbstractConnection):
         if message=None, remove 'away' status
         else, set away message.
         """
-        if not self._established:
+        if not self.established:
             self._log("can't set away status: connection not established", 1)
             return False
 
