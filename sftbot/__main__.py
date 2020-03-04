@@ -117,6 +117,8 @@ def main():
     mblchannel = cparser.get('mumble', 'channel')
     mblpassword = cparser.get('mumble', 'password')
     mblloglevel = cparser.getint('mumble', 'loglevel')
+    mblcertfile = cparser.get('mumble', 'certfile')
+    mblkeyfile = cparser.get('mumble', 'keyfile')
 
     # configuration for the IRC connection
     ircservername = cparser.get('irc', 'server')
@@ -136,7 +138,9 @@ def main():
         mblchannel,
         mblpassword,
         "mumble",
-        mblloglevel)
+        mblloglevel,
+        mblcertfile,
+        mblkeyfile)
 
     irc = IRCConnection.IRCConnection(
         ircservername,

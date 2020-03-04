@@ -2,19 +2,28 @@
 
 [mumble]
 server=mumble.example.com
-port=64738                 ; mumble default port
+; mumble default port
+port=64738
 nickname=sftbot
 channel=testchannel
 password=hunter2
-loglevel=3                 ; for production use, I'd recommend 1 or 2
-
+; for production use, I'd recommend 1 or 2
+loglevel=3
+; leave these empty if you don't want to use a certificate
+; you can generate these files using openssl req -nodes -x509 -newkey rsa:2048 -days 7300 -keyout key_filename -out cert_filename
+certfile=cert_filename
+keyfile=key_filename
 
 [irc]
 server=irc.example.com
-port=6667                  ; irc default port
+; irc default port
+port=6667
 nickname=sftbot
 channel=myawesomebotchannel
-authtype=none              ; possibilities: {none, channelkey, nickserv, pass}
-password=hunter2           ; will be ignored if authtype == none
+; possibilities: {none, channelkey, nickserv, pass}
+authtype=none
+; will be ignored if authtype == none
+password=hunter2
 encoding=utf-8
-loglevel=3                 ; for production use, I'd recommend 1 or 2
+; for production use, I'd recommend 1 or 2
+loglevel=3

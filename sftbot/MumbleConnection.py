@@ -44,13 +44,15 @@ class MumbleConnection(AbstractConnection.AbstractConnection):
 
     # call the superconstructor and set global configuration variables.
     def __init__(self, hostname, port, nickname, channel, password, name,
-                 loglevel):
+                 loglevel, certfile=None, keyfile=None):
         super(MumbleConnection, self).__init__(name, loglevel)
         self._hostname = hostname
         self._port = port
         self._nickname = nickname
         self._channel = channel
         self._password = password
+        self._certfile = certfile
+        self._keyfile = keyfile
 
         # channel id lookup table
         self._channelIds = {}
@@ -67,13 +69,13 @@ class MumbleConnection(AbstractConnection.AbstractConnection):
     def _openConnection(self):
         """
         open the (SSL) socket and return True.
-        # TODO: support server certificate validation, provide client cert
+        # TODO: support server certificate validation
         """
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((self._hostname, self._port))
             self._log("trying python default ssl socket", 3)
-            self._socket = ssl.wrap_socket(s)
+            self._socket = ssl.wrap_socket(s, certfile=self._certfile, keyfile=self._keyfile)
             return True
         except ssl.SSLError:
             try:
