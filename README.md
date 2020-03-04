@@ -4,7 +4,7 @@ This bot provides a text bridge between an IRC channel and a Mumble server.
 
 ### How to install/configure/run
 
-You can directly run sftbot by typing `./run` or `python2 -m sftbot`.
+You can directly run sftbot by typing `./run` or `python3 -m sftbot`.
 To permanently install sftbot, type `sudo ./setup.py install`. Then, you can run it by typing `sftbot`.
 
 You need to provide a config file that (among others) contains user credentials for the bot. An example conf file can be found in `sftbot.conf.example`.
@@ -25,21 +25,20 @@ More complex, 'botty' behaviour may be implemented the same way; note that you c
 
 ### Dependencies
 
-- python2
-- protobuf-python (Debian/Ubuntu package: python-protobuf, Arch package: python2-protobuf)
+- python3
+- protobuf-python (Debian/Ubuntu package: python-protobuf, Arch package: python-protobuf)
 
 ### TODOs
 
 Nice-to-have features (which we don't plan to implement right now, but feel free to do it yourself):
 
 - SSL certificate validation support
-- SSL client certificate support
 - More chat protocols (e.g. XMPP multi-user chat)
 - Init scripts for `<your distribution here>`
 
 ### Misc
 
-Mumble uses Google Protobuf for most of its communications; this means that one code file needs to be auto-generated (that's what the `Makefile` is there for). Unfortunately, `protoc` does not officially support `python3`, so we're forced to deal with `python2` and all its string buffer ugliness.
+Mumble uses Google Protobuf for most of its communications; this means that one code file needs to be auto-generated (that's what the `Makefile` is there for).
 
 ### Contact
 
