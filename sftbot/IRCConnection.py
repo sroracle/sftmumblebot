@@ -112,7 +112,7 @@ class IRCConnection(AbstractConnection.AbstractConnection):
             # check if the line contains a private message (PRIVMSG)
             if line[1] == "PRIVMSG":
                 self._invokeTextCallback(line[0].split('!')[0].lstrip(': '),
-                                         line[3].lstrip(': '))
+                                         line[3].replace(":", "", 1))
 
             if line[1] == "366":  # RPL_ENDOFNAMES
                 self._connectionEstablished()
