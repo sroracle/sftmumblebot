@@ -1,5 +1,6 @@
 from . import AbstractConnection
 import socket
+import ssl
 
 
 class IRCConnection(AbstractConnection.AbstractConnection):
@@ -25,6 +26,7 @@ class IRCConnection(AbstractConnection.AbstractConnection):
     def _openConnection(self):
         self._socket = socket.socket()
         self._socket.connect((self._hostname, self._port))
+        self._socket = ssl.wrap_socket(self._socket)
         return True
 
     def _initConnection(self):
