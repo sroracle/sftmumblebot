@@ -17,18 +17,12 @@ def mumbleTextMessageCallback(sender, message):
     line = "mumble: " + sender + ": " + message
     console.sendTextMessage(line)
     irc.sendTextMessage(line)
-    if message == 'gtfo':
-        mumble.sendTextMessage("KAY CU")
-        mumble.stop()
 
 
 def ircTextMessageCallback(sender, message):
     line = "irc: " + sender + ": " + message
     console.sendTextMessage(line)
     mumble.sendTextMessage(line)
-    if message == 'gtfo':
-        irc.sendTextMessage("KAY CU")
-        irc.stop()
 
 
 
