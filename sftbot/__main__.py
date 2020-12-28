@@ -31,10 +31,6 @@ def ircTextMessageCallback(sender, message):
         irc.stop()
 
 
-def consoleTextMessageCallback(sender, message):
-    line = "console: " + message
-    irc.sendTextMessage(line)
-    mumble.sendTextMessage(line)
 
 
 def mumbleConnected():
@@ -159,7 +155,6 @@ def main():
     # register text callback functions
     mumble.registerTextCallback(mumbleTextMessageCallback)
     irc.registerTextCallback(ircTextMessageCallback)
-    console.registerTextCallback(consoleTextMessageCallback)
 
     # register connection-established callback functions
     mumble.registerConnectionEstablishedCallback(mumbleConnected)
