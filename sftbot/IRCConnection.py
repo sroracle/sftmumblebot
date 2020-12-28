@@ -94,7 +94,7 @@ class IRCConnection(AbstractConnection.AbstractConnection):
 
         # process all lines.
         for line in lines:
-            line = line.decode()
+            line = line.decode(errors="replace")
             self._log("rx: " + line, 3)
             # split the line up at spaces
             line = line.rstrip().split(' ', 3)
