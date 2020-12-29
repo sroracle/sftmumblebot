@@ -44,7 +44,22 @@ def mumbleTextMessageCallback(sender, message):
     irc.sendTextMessage(line)
 
 
+BOTS = ("IRC", "mumsi", "Music")
+
 def ircTextMessageCallback(sender, message):
+    if message == "!mumbleusers":
+        users = mumble._userlist.copy()
+        for i in BOTS:
+            users.discard(i)
+        users = sorted(users)
+        if not users:
+            line = "Just bots."
+        else:
+            line = ", ".join([i[0] + "\u200b" + i[1:] for i in users])
+
+        irc.sendTextMessage(line)
+        return
+
     line = f"<{sender}> {message}"
     line = html.escape(line)
     console.sendTextMessage(line)

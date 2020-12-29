@@ -59,6 +59,7 @@ class MumbleConnection(AbstractConnection.AbstractConnection):
         # user id lookup table (and reverse)
         self._users = {}
         self._userIds = {}
+        self._userlist = set()
         # current session and channel id
         self._session = None
 
@@ -187,6 +188,7 @@ class MumbleConnection(AbstractConnection.AbstractConnection):
             if pbMess.name and pbMess.session:
                 self._users[pbMess.session] = pbMess.name
                 self._userIds[pbMess.name] = pbMess.session
+                self._userlist.add(pbMess.name)
                 self._log("user " + pbMess.name + " has id " +
                           str(pbMess.session), 2)
 
@@ -198,6 +200,11 @@ class MumbleConnection(AbstractConnection.AbstractConnection):
                           str(pbMess.channel_id), 2)
 
                 self._connectionEstablished()
+
+        elif messagetype == pb2.UserRemove:
+            user = self._users.get(pbMess.session)
+            if user:
+                self._userlist.discard(user)
 
         elif messagetype == pb2.UDPTunnel:
             self._log("won't analyze your voice packages, sorry", 4)
