@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import html
+import html.parser
 import sys
 from . import MumbleConnection
 from . import IRCConnection
@@ -12,15 +14,35 @@ irc = None
 mumble = None
 console = None
 
+class TakeADump(html.parser.HTMLParser):
+    def __init__(self, feed, **kwargs):
+        super().__init__(**kwargs)
+        self.data = []
+        self.url = None
+        self.feed(feed)
+
+    def handle_starttag(self, tag, attrs):
+        attrs = {i: j for i, j in attrs}
+        if tag == "a" and "href" in attrs:
+            self.url = attrs["href"]
+
+    def handle_data(self, data):
+        self.data += data.split()
+
+    def handle_endtag(self, tag):
+        if tag == "a":
+            self.url = None
 
 def mumbleTextMessageCallback(sender, message):
-    line = "mumble: " + sender + ": " + message
+    line = f"<{sender}> "
+    line += " ".join(TakeADump(message).data)
     console.sendTextMessage(line)
     irc.sendTextMessage(line)
 
 
 def ircTextMessageCallback(sender, message):
-    line = "irc: " + sender + ": " + message
+    line = f"<{sender}> {message}"
+    line = html.escape(line)
     console.sendTextMessage(line)
     mumble.sendTextMessage(line)
 
