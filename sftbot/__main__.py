@@ -38,15 +38,17 @@ def mumbleTextMessageCallback(sender, message):
         return
     if sender == "Music" and not message.startswith("Playing"):
         return
-    line = f"<{sender}> "
+    line = f"NPC #{irc._channel} {sender} :"
     line += " ".join(TakeADump(message).data)
     console.sendTextMessage(line)
-    irc.sendTextMessage(line)
+    irc._sendMessage(line)
 
 
 BOTS = ("IRC", "mumsi", "Music")
 
 def ircTextMessageCallback(sender, message):
+    if (sender.startswith("\x1f") and sender.endswith("\x1f")):
+        return
     if message == "!mumbleusers":
         users = mumble._userlist.copy()
         for i in BOTS:
