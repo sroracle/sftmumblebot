@@ -1,5 +1,4 @@
 from . import AbstractConnection
-import sys
 
 
 class ConsoleConnection(AbstractConnection.AbstractConnection):
@@ -34,7 +33,7 @@ class ConsoleConnection(AbstractConnection.AbstractConnection):
         read data from stdin, and interpret it as a chat message
         """
         try:
-            line = sys.stdin.readline()
+            line = input()
         except KeyboardInterrupt:
             self._log("keyboard interrupt", 1)
             self._invokeTextCallback("console", "Goodbye.")
