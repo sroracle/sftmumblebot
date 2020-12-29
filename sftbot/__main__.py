@@ -36,6 +36,8 @@ class TakeADump(html.parser.HTMLParser):
 def mumbleTextMessageCallback(sender, message):
     if message.startswith("!"):
         return
+    if sender == "Music" and not message.startswith("Playing"):
+        return
     line = f"<{sender}> "
     line += " ".join(TakeADump(message).data)
     console.sendTextMessage(line)
