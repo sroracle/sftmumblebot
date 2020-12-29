@@ -34,6 +34,8 @@ class TakeADump(html.parser.HTMLParser):
             self.url = None
 
 def mumbleTextMessageCallback(sender, message):
+    if message.startswith("!"):
+        return
     line = f"<{sender}> "
     line += " ".join(TakeADump(message).data)
     console.sendTextMessage(line)
