@@ -68,6 +68,10 @@ def ircTextMessageCallback(sender, message):
     mumble.sendTextMessage(line)
 
 
+def mumbleUserCallback(user, join):
+    line = f"NPCA #{irc._channel} {user} :"
+    line += "joined" if join else "left"
+    irc._sendMessage(line)
 
 
 def mumbleConnected():
@@ -192,6 +196,7 @@ def main():
     # register text callback functions
     mumble.registerTextCallback(mumbleTextMessageCallback)
     irc.registerTextCallback(ircTextMessageCallback)
+    mumble.registerUserCallback(mumbleUserCallback)
 
     # register connection-established callback functions
     mumble.registerConnectionEstablishedCallback(mumbleConnected)

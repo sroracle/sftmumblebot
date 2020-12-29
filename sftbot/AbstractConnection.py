@@ -39,6 +39,8 @@ class AbstractConnection(object):
         # on connection attempt failure
         self._connectionFailedCallback = []
 
+        self._userCallback = []
+
     def _openConnection(self):
         """
         SHOULD open sockets/files etc.
@@ -146,6 +148,9 @@ class AbstractConnection(object):
     def registerConnectionFailedCallback(self, function):
         self._connectionFailedCallback.append(function)
 
+    def registerUserCallback(self, function):
+        self._userCallback.append(function)
+
     def _invokeTextCallback(self, sender, message):
         for f in self._textCallback:
             f(sender, message)
@@ -161,6 +166,10 @@ class AbstractConnection(object):
     def _invokeConnectionFailedCallback(self):
         for f in self._connectionFailedCallback:
             f()
+
+    def _invokeUserCallback(self, user, join):
+        for f in self._userCallback:
+            f(user, join)
 
     def start(self):
         """

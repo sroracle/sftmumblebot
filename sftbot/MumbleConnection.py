@@ -191,6 +191,7 @@ class MumbleConnection(AbstractConnection.AbstractConnection):
                 self._userlist.add(pbMess.name)
                 self._log("user " + pbMess.name + " has id " +
                           str(pbMess.session), 2)
+                self._invokeUserCallback(pbMess.name, True)
 
             if ((pbMess.channel_id is not None and
                  pbMess.session == self._session)):
@@ -205,6 +206,7 @@ class MumbleConnection(AbstractConnection.AbstractConnection):
             user = self._users.get(pbMess.session)
             if user:
                 self._userlist.discard(user)
+                self._invokeUserCallback(user, False)
 
         elif messagetype == pb2.UDPTunnel:
             self._log("won't analyze your voice packages, sorry", 4)
